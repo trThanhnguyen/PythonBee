@@ -1,12 +1,3 @@
-"""
-This script captures images infinitely and display them until user press 'q'
-Resulting frames are decoded into raw stereo images (Left and Right).
-The infomation of format 7 mode 3 of the camera is also shown.
-The resulting image is saved locally in ./output/stereo directory.
-
-Color image: left camera (with PAN 0 and Little endian (Flycapture default settings))
-"""
-
 import PyCapture2
 from sys import exit
 import numpy as np
@@ -14,8 +5,6 @@ import cv2
 import os
 
 save_path = './output/stereo'
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
 
 
 def print_format7_capabilities(fmt7_info):
@@ -29,8 +18,9 @@ def print_format7_capabilities(fmt7_info):
 
 
 def capture(cam):
+
+    i = 0
     while True:
-        i = 0
         try:
             image = cam.retrieveBuffer()
         except PyCapture2.Fc2error as fc2Err:
@@ -44,8 +34,11 @@ def capture(cam):
         cv2.imshow('left', left)
         cv2.imshow('right', right)
 
-        cv2.imwrite(f'left_{i}.png', left)
-        cv2.imwrite(f'right_{i}.png', right)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
+        cv2.imwrite(f'{save_path}/left_{i}.png', left)
+        cv2.imwrite(f'{save_path}/right_{i}.png', right)
         
         i += 1
     # Quit when user press q
